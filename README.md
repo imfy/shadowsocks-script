@@ -1,7 +1,8 @@
 Those are copied and modified from @teddysun.
 
 
-一、下载安装
+# 一、下载安装
+
 首先需要将脚本下载到某个固定路径下，比如 /opt 下，再赋予执行权限。
 执行以下命令：
 
@@ -9,7 +10,8 @@ wget --no-check-certificate -O /opt/shadowsocks-crond.sh https://raw.githubuserc
 chmod 755 /opt/shadowsocks-crond.sh
 
 
-二、检查 cron 进程
+# 二、检查 cron 进程
+
 执行以下命令，检查 cron 进程是否存在：
 
 ps -ef | grep -v grep | grep cron
@@ -26,7 +28,8 @@ Debian/Ubuntu 执行如下命令：
 apt-get install -y cron
 
 
-三、配置 cron 计划
+# 三、配置 cron 计划
+
 假设监视脚本路径就是 /opt/shadowsocks-crond.sh
 假设设为每 5 分钟监视一次。
 那么配置 cron 计划如下：
