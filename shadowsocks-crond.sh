@@ -28,8 +28,9 @@ for init in "${shadowsocks_init[@]}"; do
         fi
 
         if [ -z "${pid}" ]; then
-            echo "$(date +'%Y-%m-%d %H:%M:%S') ${name[$i]} is not running" >> ${log}
-            echo "$(date +'%Y-%m-%d %H:%M:%S') Starting ${name[$i]}" >> ${log}
+            echo "$(date +'%Y-%m-%d %H:%M:%S') ${name[$i]} is not running, trying to start it..." >> ${log}
+#            echo "$(date +'%Y-%m-%d %H:%M:%S') ${name[$i]} is not running" >> ${log}
+#            echo "$(date +'%Y-%m-%d %H:%M:%S') Starting ${name[$i]}" >> ${log}
             ${init} start &>/dev/null
             if [ $? -eq 0 ]; then
                 echo "$(date +'%Y-%m-%d %H:%M:%S') ${name[$i]} start success" >> ${log}
