@@ -52,3 +52,21 @@ apt-get install -y cron
 脚本每次运行会写日志的，日志完整路径如下：
 
 /var/log/shadowsocks-crond.log
+
+# 四、Cron计划样例
+BBR
+``` bash
+*/2 * * * * /opt/shadowsocks-crond.sh
+01 */6 * * * /etc/init.d/shadowsocks-libev restart
+01 */6 * * * /etc/init.d/shadowsocks-manager restart
+01 */6 * * * systemctl restart haproxy-lkl
+*/30 * * * * echo 3 > /proc/sys/vm/drop_caches
+```
+锐速
+``` bash
+*/2 * * * * /opt/shadowsocks-crond.sh
+01 */6 * * * /etc/init.d/shadowsocks-libev restart
+01 */6 * * * /etc/init.d/shadowsocks-manager restart
+01 */6 * * * /appex/bin/serverSpeeder.sh restart
+*/30 * * * * echo 3 > /proc/sys/vm/drop_caches
+```
