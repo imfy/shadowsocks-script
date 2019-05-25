@@ -37,13 +37,38 @@ wget https://makeai.cn/master/ovz-bbr/ovz-bbr-installer.sh && chmod +x ovz-bbr-i
 # 三、设置多端口
 
 除了libev版，其它版本均可通过在config.json中添加端口信息实现，libev版本可通过ss-manager实现多端口，但近几个版本的ss-manager似乎有点问题，因此额外写了一个多端口控制脚本。
+
+## 1. 替换自启动服务
+
+由于会和libev自带的自启动服务冲突，因此要先移除默认的自启动服务：
 ``` bash
 rm /etc/init.d/shadowsocks-libev
+```
+并在rc.local中加入多端口控制脚本的自启动：
+``` bash
+vim /etc/rc.local
+```
+在末尾添加：
+``` bash
+/etc/init.d/ss-libev-manager.sh start
+```
+
+## 2. 下载ss-libev-manager
+``` bash
 wget --no-check-certificate -O /etc/init.d/ss-libev-manager.sh https://raw.githubusercontent.com/imfy/shadowsocks-script/master/ss-libev-manager.sh && chmod +x /etc/init.d/ss-libev-manager.sh
 ```
+
+## 3. 配置多端口
 可通过编辑文件开头的configs来实现端口的添加：
 ``` bash
 vim /etc/init.d/ss-libev-manager.sh
+```
+例如我要开启8388和8389两个端口，密码和加密方式均设为123456和aes-128-gcm，configs可写成如下。如需添加更多端口，按相同格式新添加行即可。
+``` bash
+configs=(
+    "8388 123456 aes-128-gcm"
+    "8389 123456 aes-128-gcm"
+)
 ```
 编辑完后执行重启指令：
 ``` bash
@@ -52,7 +77,7 @@ vim /etc/init.d/ss-libev-manager.sh
 
 # 四、设置守护
 
-受限于不同VPS的运行环境，当VPS较差时，ss服务可能会挂掉或者卡死，因此需要加一个监控，使得ss挂掉时可自动修复。
+受限于不同VPS的运行环境，当VPS环境较差时，ss服务可能会挂掉或者卡死，因此需要加一个监控，使得ss挂掉时可自动修复。
 
 ## 1. 安装cron
 
