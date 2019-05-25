@@ -6,11 +6,11 @@ configs=(
 )
 
 do_start() {
-    server_port=1080
+    local_port=1080
     for line in "${configs[@]}"; do
         config=($line)
-        nohup ${ssserver} -s 0.0.0.0 -p $server_port -l ${config[0]} -k ${config[1]} -m ${config[2]} > /var/log/ss-libev-manager/${config[0]}.log &
-        let "server_port++"
+        nohup ${ssserver} -s 0.0.0.0 -l $local_port -p ${config[0]} -k ${config[1]} -m ${config[2]} > /var/log/ss-libev-manager/${config[0]}.log &
+        let "local_port++"
         echo "Port" ${config[0]} "with encrypt" ${config[2]} "started."
     done
 }
