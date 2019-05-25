@@ -54,11 +54,13 @@ vim /etc/rc.local
 ```
 
 ## 2. 下载ss-libev-manager
+
 ``` bash
 wget --no-check-certificate -O /etc/init.d/ss-libev-manager.sh https://raw.githubusercontent.com/imfy/shadowsocks-script/master/ss-libev-manager.sh && chmod +x /etc/init.d/ss-libev-manager.sh
 ```
 
 ## 3. 配置多端口
+
 可通过编辑文件开头的configs来实现端口的添加：
 ``` bash
 vim /etc/init.d/ss-libev-manager.sh
@@ -73,6 +75,12 @@ configs=(
 编辑完后执行重启指令：
 ``` bash
 /etc/init.d/ss-libev-manager.sh restart
+```
+
+## 4. 端口流量监控
+
+``` bash
+iptables -L -v -n
 ```
 
 # 四、设置守护
@@ -106,16 +114,18 @@ crontab -e
 BBR
 ``` bash
 */2 * * * * /etc/init.d/ss-libev-manager.sh check
-01 */6 * * * /etc/init.d/ss-libev-manager.sh restart
-01 */6 * * * systemctl restart haproxy-lkl
+1 */6 * * * /etc/init.d/ss-libev-manager.sh restart
+1 */6 * * * systemctl restart haproxy-lkl
 */30 * * * * echo 3 > /proc/sys/vm/drop_caches
+0 0 1 * * iptable -Z OUTPUT
 ```
 锐速
 ``` bash
 */2 * * * * /etc/init.d/ss-libev-manager.sh check
-01 */6 * * * /etc/init.d/ss-libev-manager.sh restart
-01 */6 * * * /appex/bin/serverSpeeder.sh restart
+1 */6 * * * /etc/init.d/ss-libev-manager.sh restart
+1 */6 * * * /appex/bin/serverSpeeder.sh restart
 */30 * * * * echo 3 > /proc/sys/vm/drop_caches
+0 0 1 * * iptable -Z OUTPUT
 ```
 完成编辑后重启cron
 ``` bash
