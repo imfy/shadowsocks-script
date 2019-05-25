@@ -94,7 +94,9 @@ iptables -L -v -n
 ps -ef | grep -v grep | grep cron
 ```
 如果存在返回值，则表示 cron 已经正确安装并处于启动中。
+
 否则，则需要安装 cron。
+
 CentOS/Redhat/Amazon 执行如下命令：
 ``` bash
 yum install -y crontabs
@@ -110,7 +112,8 @@ apt-get install -y cron
 ``` bash
 crontab -e
 ```
-在文本末尾加上如下信息（记得末尾多留几个空行）
+在文本末尾加上如下信息
+
 BBR
 ``` bash
 */2 * * * * /etc/init.d/ss-libev-manager.sh check
@@ -127,6 +130,18 @@ BBR
 */30 * * * * echo 3 > /proc/sys/vm/drop_caches
 0 0 1 * * iptable -Z OUTPUT
 ```
+上面5行依次是：
+
+1. 每隔2分钟检查一次当前ss运行状态（check指令会检查是否有端口掉线，若掉线则重启）
+
+2. 每6小时重启一次ss（因为ss有时会“假死”，进程没死但却不工作了，因此光检查进程是否活着还不够，还需要设置一个定时重启。设置成每隔6小时的01分重启是为了避免与第一条指令同时执行导致出错）
+
+3. 每6小时重启一次加速工具（加速有时也会假死，特指nanqinlang的BBR）
+
+4. 每30分钟清除一次缓存（Virmach的部分KVM会把内存撑爆导致ss和cron进程全被杀掉）
+
+5. 每个月的1号重置流量统计（可根据VPS流量重置时间自行设定）
+
 完成编辑后重启cron
 ``` bash
 /etc/init.d/cron restart
