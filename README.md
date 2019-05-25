@@ -73,6 +73,11 @@ apt-get install -y cron
 
 ## 2. 配置 cron 计划
 
+编辑cron计划
+``` bash
+crontab -e
+```
+在文本末尾加上如下信息（记得末尾多留几个空行）
 BBR
 ``` bash
 */2 * * * * /etc/init.d/ss-libev-manager.sh check
@@ -86,4 +91,8 @@ BBR
 01 */6 * * * /etc/init.d/ss-libev-manager.sh restart
 01 */6 * * * /appex/bin/serverSpeeder.sh restart
 */30 * * * * echo 3 > /proc/sys/vm/drop_caches
+```
+完成编辑后重启cron
+``` bash
+/etc/init.d/cron restart
 ```
