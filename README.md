@@ -9,7 +9,7 @@ chmod +x shadowsocks-all.sh
 
 ### 二、进行加速优化
 
-锐速BBR根据实际环境二选一
+锐速BBR根据实际环境二选一，OpenVZ和LXC架构只能使用OpenVZ版的魔改BBR，KVM和XEN架构可以选锐速或KVM版的BBR。这两者对内核要求有区别，BBR只支持较新的内核，而锐速仅支持较旧的内核（0oVicero0大佬已经做出支持新内核的锐速了，但听说效果不是很好）
 
 #### 1. 锐速
 
@@ -18,19 +18,21 @@ chmod +x shadowsocks-all.sh
 wget --no-check-certificate -O appex.sh https://raw.githubusercontent.com/0oVicero0/serverSpeeder_Install/master/appex.sh && chmod +x appex.sh && bash appex.sh install
 ```
 
-#### 2. BBR魔改版（仅OpenVZ）
+#### 2. BBR魔改版（木木）
 
-使用的是木木提供的魔改版BBR（原文链接：https://www.bbaaz.com/thread-91-1-1.html ）
+木木提供的魔改版BBR仅支持OpenVZ（原文链接：https://www.bbaaz.com/thread-91-1-1.html ）
 ``` bash
 wget https://makeai.cn/master/ovz-bbr/ovz-bbr-installer.sh && chmod +x ovz-bbr-installer.sh && ./ovz-bbr-installer.sh
 ```
-注意好处在于可以自由控制端口和重启，但需要开启TUN/TAP
+该版好处在于控制端口和重启较为方便，但因为是lkl-haproxy版，需要开启TUN/TAP。
 
 
-#### 3. BBR魔改版
+#### 3. BBR魔改版（南琴浪）
 
-若需在KVM上或者无法开启TUN/TAP的机器上使用BBR，推荐使用南琴浪@nanqinlang 的版本
-仓库链接：https://github.com/tcp-nanqinlang/wiki/wiki/general
+若需在KVM上或者无法开启TUN/TAP的OpenVZ机器上使用BBR，推荐使用南琴浪@nanqinlang 的版本（仓库链接：https://github.com/tcp-nanqinlang/wiki/wiki/general ）
+
+其中lkl-haproxy版只能在OpenVZ架构上使用，且需要开启TUN/TAP；lkl-rinetd版也只能在OpenVZ上使用，但不需要开启TUN/TAP；general版只能在KVM上使用。
+
 
 ### 三、设置多端口
 
@@ -47,7 +49,6 @@ rm /etc/init.d/shadowsocks-libev
 
 ``` bash
 wget --no-check-certificate -O /etc/init.d/ss-libev-manager.sh https://raw.githubusercontent.com/imfy/shadowsocks-script/master/ss-libev-manager.sh && chmod 755 /etc/init.d/ss-libev-manager.sh
-echo "/etc/init.d/ss-libev-manager.sh start" >> /etc/rc.local
 update-rc.d ss-libev-manager.sh defaults 99
 ```
 
