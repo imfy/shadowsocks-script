@@ -1,3 +1,17 @@
+#!/bin/bash
+# chkconfig: 2345 90 10
+# description: A secure socks5 proxy, designed to protect your Internet traffic.
+
+### BEGIN INIT INFO
+# Provides:          fy
+# Required-Start:    $network $syslog
+# Required-Stop:     $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Fast tunnel proxy that helps you bypass firewalls
+# Description:       Start or Stop the Shadowsocks-libev server to support multiple users with ss-manager
+### END INIT INFO
+
 ssserver=/usr/local/bin/ss-server
 # The params in configs are port, password and encrypt method.
 configs=(
@@ -53,6 +67,9 @@ fi
 case "$1" in
     start|stop|restart|status|check)
     do_$1
+    ;;
+    "")
+    do_restart
     ;;
     *)
     echo "Usage: $0 { start | stop | restart | status | check }"

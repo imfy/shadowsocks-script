@@ -36,25 +36,19 @@ wget https://makeai.cn/master/ovz-bbr/ovz-bbr-installer.sh && chmod +x ovz-bbr-i
 
 除了libev版，其它版本均可通过在config.json中添加端口信息实现，libev版本可通过ss-manager实现多端口，但近几个版本的ss-manager似乎有点问题，因此额外写了一个多端口控制脚本。
 
-#### 1. 替换自启动服务
+#### 1. 移除原有自启动服务
 
 由于会和libev自带的自启动服务冲突，因此要先移除默认的自启动服务：
 ``` bash
 rm /etc/init.d/shadowsocks-libev
 ```
-并在rc.local中加入多端口控制脚本的自启动：
-``` bash
-vim /etc/rc.local
-```
-在末尾添加：
-``` bash
-/etc/init.d/ss-libev-manager.sh start
-```
 
-#### 2. 下载ss-libev-manager
+#### 2. 下载ss-libev-manager并设为开机自动启动
 
 ``` bash
-wget --no-check-certificate -O /etc/init.d/ss-libev-manager.sh https://raw.githubusercontent.com/imfy/shadowsocks-script/master/ss-libev-manager.sh && chmod +x /etc/init.d/ss-libev-manager.sh
+wget --no-check-certificate -O /etc/init.d/ss-libev-manager.sh https://raw.githubusercontent.com/imfy/shadowsocks-script/master/ss-libev-manager.sh && chmod 755 /etc/init.d/ss-libev-manager.sh
+echo "/etc/init.d/ss-libev-manager.sh start" >> /etc/rc.local
+update-rc.d ss-libev-manager.sh defaults 99
 ```
 
 #### 3. 配置多端口
