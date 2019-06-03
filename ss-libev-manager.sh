@@ -24,7 +24,7 @@ do_start() {
     for line in "${configs[@]}"; do
         config=($line)
         nohup ${ssserver} -s 0.0.0.0 -l $local_port -p ${config[0]} -k ${config[1]} -m ${config[2]} > /var/log/ss-libev-manager/${config[0]}.log &
-        monitor=$(iptables -L -v -n | grep dpt:${config[0]})
+        monitor=$(iptables -L -v -n | grep spt:${config[0]})
         if [ ${#monitor} == 0 ]; then
             iptables -A OUTPUT -p tcp --sport ${config[0]}
         fi
