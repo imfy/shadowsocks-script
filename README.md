@@ -113,7 +113,7 @@ BBR
 1 */6 * * * /etc/init.d/ss-libev-manager.sh restart
 1 */6 * * * systemctl restart haproxy-lkl
 */30 * * * * echo 3 > /proc/sys/vm/drop_caches
-0 0 1 * * iptable -Z OUTPUT
+0 0 1 * * iptables -Z OUTPUT
 ```
 锐速
 ``` bash
@@ -121,7 +121,7 @@ BBR
 1 */6 * * * /etc/init.d/ss-libev-manager.sh restart
 1 */6 * * * /appex/bin/serverSpeeder.sh restart
 */30 * * * * echo 3 > /proc/sys/vm/drop_caches
-0 0 1 * * iptable -Z OUTPUT
+0 0 1 * * iptables -Z OUTPUT
 ```
 添加的5行信息依次为：
 ``` bash
