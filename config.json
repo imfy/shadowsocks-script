@@ -1,0 +1,11 @@
+{
+  "server":["::","0.0.0.0"],
+  "server_port":14955,
+  "timeout":300,
+  "user":"nobody",
+  "fast_open":false,
+  "nameserver":"8.8.8.8",
+  "mode":"tcp_and_udp",
+  "plugin":"",
+  "plugin_opts": ""
+}
