@@ -19,6 +19,10 @@ configs=(
     "/root/config.json 8389 123456 aes-128-gcm"
 )
 
+# 更新后请先使用【iptables -F】或【ip6tables -F】清除规则
+allow_list=()
+allow_list_ip6=()
+
 do_start() {
     local_port=1080
     for line in "${configs[@]}"; do
@@ -26,7 +30,24 @@ do_start() {
         nohup ${ssserver} -c ${config[0]} -l $local_port -p ${config[1]} -k ${config[2]} -m ${config[3]} > /var/log/ss-libev-manager/${config[1]}.log &
         monitor=$(iptables -L -v -n | grep spt:${config[1]})
         if [ ${#monitor} == 0 ]; then
+            if [ ${#allow_list[@]} -ne 0 ]; then
+                for ip in ${allow_list[@]}; do
+                    iptables -A INPUT -s $ip -p tcp --dport ${config[1]} -j ACCEPT
+                done
+                iptables -A INPUT -p tcp --dport ${config[1]} -j DROP
+            else
+                iptables -A INPUT -p tcp --dport ${config[1]}
+            fi
             iptables -A OUTPUT -p tcp --sport ${config[1]}
+            if [ ${#allow_list_ip6[@]} -ne 0 ]; then
+                for ip in ${allow_list[@]}; do
+                    ip6tables -A INPUT -s $ip -p tcp --dport ${config[1]} -j ACCEPT
+                done
+                ip6tables -A INPUT -p tcp --dport ${config[1]} -j DROP
+            else
+                ip6tables -A INPUT -p tcp --dport ${config[1]}
+            fi
+            ip6tables -A OUTPUT -p tcp --sport ${config[1]}
         fi
         let "local_port++"
         echo "Port" ${config[1]} "with encrypt" ${config[3]} "started."
