@@ -32,22 +32,38 @@ do_start() {
         if [ ${#monitor} == 0 ]; then
             if [ ${#allow_list[@]} -ne 0 ]; then
                 for ip in ${allow_list[@]}; do
-                    iptables -A INPUT -s $ip -p tcp --dport ${config[1]} -j ACCEPT
+                    iptables -A INPUT -p tcp -s $ip --dport ${config[1]} -j ACCEPT
+                    iptables -A INPUT -p udp -s $ip --dport ${config[1]} -j ACCEPT
+                    iptables -A OUTPUT -p tcp -d $ip --sport ${config[1]} -j ACCEPT
+                    iptables -A OUTPUT -p udp -d $ip --sport ${config[1]} -j ACCEPT
                 done
-                iptables -A INPUT -p tcp --dport ${config[1]} -j DROP
+                iptables -A INPUT -p tcp --dport ${config[1]} -j REJECT --reject-with tcp-reset
+                iptables -A INPUT -p udp --dport ${config[1]} -j REJECT --reject-with icmp-host-prohibited
+                iptables -A OUTPUT -p tcp --sport ${config[1]} -j REJECT --reject-with tcp-reset
+                iptables -A OUTPUT -p udp --sport ${config[1]} -j REJECT --reject-with icmp-host-prohibited
             else
                 iptables -A INPUT -p tcp --dport ${config[1]}
+                iptables -A INPUT -p udp --dport ${config[1]}
+                iptables -A OUTPUT -p tcp --sport ${config[1]}
+                iptables -A OUTPUT -p udp --sport ${config[1]}
             fi
-            iptables -A OUTPUT -p tcp --sport ${config[1]}
             if [ ${#allow_list_ip6[@]} -ne 0 ]; then
                 for ip in ${allow_list[@]}; do
-                    ip6tables -A INPUT -s $ip -p tcp --dport ${config[1]} -j ACCEPT
+                    ip6tables -A INPUT -p tcp -s $ip --dport ${config[1]} -j ACCEPT
+                    ip6tables -A INPUT -p udp -s $ip --dport ${config[1]} -j ACCEPT
+                    ip6tables -A OUTPUT -p tcp -d $ip --sport ${config[1]} -j ACCEPT
+                    ip6tables -A OUTPUT -p udp -d $ip --sport ${config[1]} -j ACCEPT
                 done
-                ip6tables -A INPUT -p tcp --dport ${config[1]} -j DROP
+                ip6tables -A INPUT -p tcp --dport ${config[1]} -j REJECT --reject-with tcp-reset
+                ip6tables -A INPUT -p udp --dport ${config[1]} -j REJECT --reject-with icmp-host-prohibited
+                ip6tables -A OUTPUT -p tcp --sport ${config[1]} -j REJECT --reject-with tcp-reset
+                ip6tables -A OUTPUT -p udp --sport ${config[1]} -j REJECT --reject-with icmp-host-prohibited
             else
                 ip6tables -A INPUT -p tcp --dport ${config[1]}
+                ip6tables -A INPUT -p udp --dport ${config[1]}
+                ip6tables -A OUTPUT -p tcp --sport ${config[1]}
+                ip6tables -A OUTPUT -p udp --sport ${config[1]}
             fi
-            ip6tables -A OUTPUT -p tcp --sport ${config[1]}
         fi
         let "local_port++"
         echo "Port" ${config[1]} "with encrypt" ${config[3]} "started."
