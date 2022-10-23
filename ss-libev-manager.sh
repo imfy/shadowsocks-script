@@ -29,6 +29,7 @@ do_start() {
         config=($line)
         nohup ${ssserver} -c ${config[0]} -l $local_port -p ${config[1]} -k ${config[2]} -m ${config[3]} > /var/log/ss-libev-manager/${config[1]}.log &
         monitor=$(iptables -L -v -n | grep spt:${config[1]})
+        monitor6=$(ip6tables -L -v -n | grep spt:${config[1]})
         if [ ${#monitor} == 0 ]; then
             if [ ${#allow_list[@]} -ne 0 ]; then
                 for ip in ${allow_list[@]}; do
@@ -47,6 +48,9 @@ do_start() {
                 iptables -A OUTPUT -p tcp --sport ${config[1]}
                 iptables -A OUTPUT -p udp --sport ${config[1]}
             fi
+            echo "Add iptables monitor."
+        fi
+        if [ ${#monitor6} == 0 ]; then
             if [ ${#allow_list_ip6[@]} -ne 0 ]; then
                 for ip in ${allow_list_ip6[@]}; do
                     ip6tables -A INPUT -p tcp -s $ip --dport ${config[1]} -j ACCEPT
@@ -64,6 +68,10 @@ do_start() {
                 ip6tables -A OUTPUT -p tcp --sport ${config[1]}
                 ip6tables -A OUTPUT -p udp --sport ${config[1]}
             fi
+            echo "Add ip6tables monitor."
+        fi
+        if [ ${#monitor} -ne 0 ] && [ ${#monitor6} -ne 0 ]; then
+            echo "No changes with iptables and ip6tables."
         fi
         let "local_port++"
         echo "Port" ${config[1]} "with encrypt" ${config[3]} "started."
