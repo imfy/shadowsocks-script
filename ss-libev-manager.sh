@@ -48,16 +48,16 @@ do_start() {
                 iptables -A OUTPUT -p udp --sport ${config[1]}
             fi
             if [ ${#allow_list_ip6[@]} -ne 0 ]; then
-                for ip in ${allow_list[@]}; do
+                for ip in ${allow_list_ip6[@]}; do
                     ip6tables -A INPUT -p tcp -s $ip --dport ${config[1]} -j ACCEPT
                     ip6tables -A INPUT -p udp -s $ip --dport ${config[1]} -j ACCEPT
                     ip6tables -A OUTPUT -p tcp -d $ip --sport ${config[1]} -j ACCEPT
                     ip6tables -A OUTPUT -p udp -d $ip --sport ${config[1]} -j ACCEPT
                 done
                 ip6tables -A INPUT -p tcp --dport ${config[1]} -j REJECT --reject-with tcp-reset
-                ip6tables -A INPUT -p udp --dport ${config[1]} -j REJECT --reject-with icmp-host-prohibited
+                ip6tables -A INPUT -p udp --dport ${config[1]} -j REJECT --reject-with icmp6-adm-prohibited
                 ip6tables -A OUTPUT -p tcp --sport ${config[1]} -j REJECT --reject-with tcp-reset
-                ip6tables -A OUTPUT -p udp --sport ${config[1]} -j REJECT --reject-with icmp-host-prohibited
+                ip6tables -A OUTPUT -p udp --sport ${config[1]} -j REJECT --reject-with icmp6-adm-prohibited
             else
                 ip6tables -A INPUT -p tcp --dport ${config[1]}
                 ip6tables -A INPUT -p udp --dport ${config[1]}
